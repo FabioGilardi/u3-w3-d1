@@ -1,8 +1,14 @@
-import { configureStore } from "@reduxjs/toolkit";
-import mainReducer from "../reducer";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import company from "../reducer/company";
+import fetch from "../reducer/fetch";
+
+const globalReducer = combineReducers({
+  company: company,
+  fetch: fetch,
+});
 
 const store = configureStore({
-  reducer: mainReducer,
+  reducer: globalReducer,
 });
 
 export default store;

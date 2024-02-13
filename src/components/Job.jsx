@@ -2,6 +2,7 @@ import { Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import { useDispatch } from "react-redux";
+import { addToFavuorites } from "../redux/actions";
 
 const Job = ({ data }) => {
   const dispatch = useDispatch();
@@ -17,10 +18,7 @@ const Job = ({ data }) => {
           variant="primary"
           className="btn-sm ms-md-3 mt-1 mt-md-0"
           onClick={() => {
-            dispatch({
-              type: "ADD_TO_FAVOURITES",
-              payload: data.company_name,
-            });
+            dispatch(addToFavuorites(data.company_name));
           }}
         >
           Add to <i className="bi bi-heart-fill"></i>

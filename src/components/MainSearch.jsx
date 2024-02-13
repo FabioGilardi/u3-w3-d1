@@ -1,11 +1,17 @@
 import { useState } from "react";
-import { Container, Row, Col, Form } from "react-bootstrap";
+import { Container, Row, Col, Form, Spinner } from "react-bootstrap";
 import Job from "./Job";
 import { Link } from "react-router-dom";
+import { getAllCompanies, showSpinner } from "../redux/actions";
+import { useDispatch, useSelector } from "react-redux";
 
 const MainSearch = () => {
   const [query, setQuery] = useState("");
-  const [jobs, setJobs] = useState([]);
+
+  const dispatch = useDispatch();
+  const jobs = useSelector((state) => state.fetch.available.data);
+  const isLoading = useSelector((state) => state.fetch.isLoading);
+  const isSpinner = useSelector((state) => state.fetch.isSpinner);
 
   const baseEndpoint =
     "https://strive-benchmark.herokuapp.com/api/jobs?search=";
@@ -14,20 +20,9 @@ const MainSearch = () => {
     setQuery(e.target.value);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    try {
-      const response = await fetch(baseEndpoint + query + "&limit=20");
-      if (response.ok) {
-        const { data } = await response.json();
-        setJobs(data);
-      } else {
-        alert("Error fetching results");
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    dispatch(getAllCompanies(baseEndpoint, query));
   };
 
   return (
@@ -50,9 +45,13 @@ const MainSearch = () => {
           </Form>
         </Col>
         <Col xs={10} className="mx-auto mb-5">
-          {jobs.map((jobData) => (
-            <Job key={jobData._id} data={jobData} />
-          ))}
+          {isSpinner && (
+            <div className="d-flex justify-content-center align-items-center my-5">
+              <Spinner animation="border" variant="primary"></Spinner>
+            </div>
+          )}
+          {!isLoading &&
+            jobs.map((jobData) => <Job key={jobData._id} data={jobData} />)}
         </Col>
       </Row>
     </Container>
